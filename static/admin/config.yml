@@ -29,8 +29,9 @@ backend:
   name: github
   repo: vaishnavi-mg/apricity
   branch: main
-  base_url: https://gerb.pages.dev
-  auth_endpoint: auth
+  auth_type: pkce
+  app_id: Ov23ligfWH2kUkpWDkwB
+
 
 # Uncomment this line when using `.\hugo.exe server` locally.
 # No OAuth needed for local preview — just run the proxy server alongside:
