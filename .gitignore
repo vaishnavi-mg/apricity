@@ -1,5 +1,6 @@
 public/
 .hugo_build.lock
 resources/
+hugo.exe
 .DS_Store
 Thumbs.db
