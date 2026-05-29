@@ -1,0 +1,74 @@
+{{ define "main" }}
+
+<article class="single-post">
+
+  {{ if .Params.cover }}
+  <div class="single-post__hero">
+    <img src="{{ .Params.cover }}"
+         alt="{{ .Params.coverAlt | default .Title }}"
+         class="single-post__hero-img" />
+    <div class="single-post__hero-overlay"></div>
+  </div>
+  {{ end }}
+
+  <div class="single-post__container">
+
+    <header class="single-post__header">
+      {{ if .Params.mood }}
+      <span class="post-mood-badge">{{ .Params.mood }}</span>
+      {{ end }}
+
+      <h1 class="single-post__title">{{ .Title }}</h1>
+
+      <div class="single-post__meta">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">
+          {{ .Date.Format "January 2, 2006" }}
+        </time>
+        {{ if .Params.tags }}
+        <span class="meta-sep">·</span>
+        <span class="post-tags">
+          {{ range .Params.tags }}
+          <a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="post-tag">{{ . }}</a>
+          {{ end }}
+        </span>
+        {{ end }}
+      </div>
+    </header>
+
+    <div class="post-body">
+      {{ .Content }}
+    </div>
+
+    <footer class="single-post__footer">
+      <a href="{{ "/posts/" | relURL }}" class="back-link">← Back to Posts</a>
+    </footer>
+
+  </div>
+
+</article>
+
+{{/* ── Giscus comments ── only renders after you fill in config.toml ── */}}
+{{ if and .Site.Params.giscusRepoId (ne .Site.Params.giscusRepoId "REPLACE_ME") }}
+<section class="comments-section">
+  <div class="comments-section__inner">
+    <h2 class="comments-title">leave a thought</h2>
+    <script src="https://giscus.app/client.js"
+      data-repo="{{ .Site.Params.giscusRepo }}"
+      data-repo-id="{{ .Site.Params.giscusRepoId }}"
+      data-category="{{ .Site.Params.giscusCategory }}"
+      data-category-id="{{ .Site.Params.giscusCategoryId }}"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="en"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</section>
+{{ end }}
+
+{{ end }}

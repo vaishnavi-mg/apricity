@@ -1,0 +1,21 @@
+{{ define "main" }}
+
+<section class="page-hero">
+  <h1 class="page-hero__title">{{ .Title | default "all posts" }}</h1>
+</section>
+
+<section class="posts-section">
+  <div class="posts-section__inner">
+    <div class="post-grid">
+      {{ range .Pages }}
+        {{ partial "post-card.html" . }}
+      {{ end }}
+    </div>
+
+    {{ if not .Pages }}
+      <p class="empty-state">No posts yet — check back soon ✦</p>
+    {{ end }}
+  </div>
+</section>
+
+{{ end }}

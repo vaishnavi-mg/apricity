@@ -1,0 +1,35 @@
+<article class="post-card">
+  <a href="{{ .RelPermalink }}" class="post-card__link" aria-label="Read {{ .Title }}">
+
+    {{/* Cover image or illustrated placeholder */}}
+    {{ if .Params.cover }}
+    <div class="post-card__img-wrap">
+      <img src="{{ .Params.cover }}"
+           alt="{{ .Params.coverAlt | default .Title }}"
+           class="post-card__img"
+           loading="lazy" />
+    </div>
+    {{ else }}
+    <div class="post-card__img-wrap post-card__img-wrap--placeholder">
+      <span class="post-card__placeholder-icon">✦</span>
+    </div>
+    {{ end }}
+
+    <div class="post-card__body">
+      {{ if .Params.mood }}
+      <span class="post-card__mood">{{ .Params.mood }}</span>
+      {{ end }}
+
+      <h3 class="post-card__title">{{ .Title }}</h3>
+
+      <time class="post-card__date" datetime="{{ .Date.Format "2006-01-02" }}">
+        {{ .Date.Format "Jan 2, 2006" }}
+      </time>
+
+      {{ if .Plain }}
+      <p class="post-card__excerpt">{{ .Plain | truncate 110 }}</p>
+      {{ end }}
+    </div>
+
+  </a>
+</article>

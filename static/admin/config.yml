@@ -1,0 +1,94 @@
+# ────────────────────────────────────────────────────────────
+# Apricity — Decap CMS configuration
+#
+# ONE-TIME SETUP (5 minutes):
+#
+#  1. Go to https://github.com/settings/developers
+#     → OAuth Apps → New OAuth App
+#       Application name : Apricity CMS
+#       Homepage URL     : https://yourusername.github.io/apricity/
+#       Callback URL     : https://api.netlify.com/auth/done
+#     → Save. Copy the Client ID and Client Secret.
+#
+#  2. Create a FREE Netlify account at https://app.netlify.com
+#     (You do NOT need to host your site there — just use it for OAuth)
+#     → Sites → "Add new site" → "Deploy manually" (drag any empty folder)
+#     → Site configuration → Access control → OAuth
+#     → "Install provider" → GitHub → paste Client ID + Secret
+#     → Note your site's subdomain (e.g. graceful-khoury-abc123)
+#
+#  3. Replace the two REPLACE_ME values below.
+#
+#  4. Replace "yourusername/apricity" with your actual GitHub repo.
+#
+#  After that: visit  https://yourusername.github.io/apricity/admin/
+#  Log in with GitHub — and you have a full CMS.
+# ────────────────────────────────────────────────────────────
+
+backend:
+  name: github
+  repo: vaishnavi-mg/apricity
+  branch: main
+  base_url: https://gerb.pages.dev
+  auth_endpoint: auth
+
+# Uncomment this line when using `.\hugo.exe server` locally.
+# No OAuth needed for local preview — just run the proxy server alongside:
+#   npx decap-server
+# Then visit http://localhost:1313/apricity/admin/
+#
+# local_backend: true
+
+media_folder:  "static/images"
+public_folder: "/images"
+
+collections:
+  - name:   "posts"
+    label:  "Posts"
+    folder: "content/posts"
+    create: true
+    delete: true
+    slug:   "{{slug}}"
+
+    fields:
+      - label:    "Title"
+        name:     "title"
+        widget:   "string"
+
+      - label:    "Date"
+        name:     "date"
+        widget:   "datetime"
+        format:   "YYYY-MM-DD"
+        time_format: false
+        default:  ""
+
+      - label:    "Mood"
+        name:     "mood"
+        widget:   "string"
+        required: false
+        hint:     "e.g.  warm & hopeful  /  melancholy  /  electric"
+
+      - label:    "Cover Image"
+        name:     "cover"
+        widget:   "image"
+        required: false
+        hint:     "Recommended: landscape, at least 1200 × 800 px"
+
+      - label:    "Cover Image Alt Text"
+        name:     "coverAlt"
+        widget:   "string"
+        required: false
+
+      - label:    "Tags"
+        name:     "tags"
+        widget:   "list"
+        required: false
+
+      - label:    "Description (used in SEO previews)"
+        name:     "description"
+        widget:   "string"
+        required: false
+
+      - label:    "Body"
+        name:     "body"
+        widget:   "markdown"
