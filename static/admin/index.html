@@ -1,40 +1,237 @@
-<!doctype html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>apricity — admin</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital@0;1&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      background: #FDFBFF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+    :root {
+      --cream: #FFF8F0;
+      --rose:  #E8A598;
+      --sage:  #8BAE92;
+      --amber: #D4922E;
+      --indigo:#2D2B5E;
     }
-    #preload {
-      text-align: center;
-      font-family: 'Playfair Display', Georgia, serif;
-      color: #7C3AED;
-    }
-    #preload h1 { font-size: 3.5rem; font-style: italic; margin: 0 0 0.4rem; }
-    #preload p  { font-size: 1rem; opacity: 0.5; margin: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--cream); color: var(--indigo); font-family: "Lora", serif; min-height: 100vh; }
+
+    /* LOGIN */
+    #login { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+    #login h1 { font-family: "Playfair Display", serif; font-size: 2.8rem; color: var(--indigo); margin-bottom: 0.25rem; }
+    #login .sub { font-family: "Caveat", cursive; font-size: 1.2rem; color: var(--amber); margin-bottom: 2.5rem; }
+    .card { background: #fff; border-radius: 1.25rem; padding: 2rem 2.25rem; width: 100%; max-width: 420px; box-shadow: 0 4px 32px rgba(45,43,94,0.09); }
+    .card label { display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.6; margin-bottom: 0.4rem; }
+    .card input[type="password"] { width: 100%; padding: 0.7rem 1rem; border: 2px solid var(--rose); border-radius: 0.6rem; font-family: "Lora", serif; font-size: 0.95rem; color: var(--indigo); background: var(--cream); outline: none; transition: border-color 0.2s; margin-bottom: 1rem; }
+    .card input[type="password"]:focus { border-color: var(--amber); }
+    .error { color: #c0392b; font-size: 0.85rem; margin: -0.5rem 0 0.75rem; display: none; }
+    .hint { font-size: 0.78rem; color: var(--indigo); opacity: 0.5; margin-top: 0.9rem; text-align: center; line-height: 1.6; }
+    .hint a { color: var(--amber); text-decoration: none; }
+    .hint a:hover { text-decoration: underline; }
+
+    /* BUTTONS */
+    .btn { display: block; width: 100%; padding: 0.75rem 1.5rem; background: var(--indigo); color: var(--cream); border: none; border-radius: 0.6rem; font-family: "Lora", serif; font-size: 1rem; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-sage { background: var(--sage); color: #fff; }
+
+    /* ADMIN */
+    #admin { display: none; }
+    .admin-header { background: var(--indigo); color: var(--cream); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .admin-header h1 { font-family: "Playfair Display", serif; font-size: 1.4rem; }
+    .admin-header h1 span { font-family: "Caveat", cursive; font-size: 1rem; opacity: 0.65; margin-left: 0.4rem; }
+    .logout-btn { background: transparent; border: 1px solid rgba(255,248,240,0.3); color: var(--cream); padding: 0.35rem 1rem; border-radius: 0.4rem; cursor: pointer; font-family: "Lora", serif; font-size: 0.85rem; transition: background 0.2s; }
+    .logout-btn:hover { background: rgba(255,248,240,0.12); }
+    .admin-body { max-width: 1000px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; align-items: start; }
+    @media (max-width: 720px) { .admin-body { grid-template-columns: 1fr; } }
+    .panel { background: #fff; border-radius: 1.25rem; padding: 1.75rem; box-shadow: 0 2px 20px rgba(45,43,94,0.07); }
+    .panel h2 { font-family: "Playfair Display", serif; font-size: 1.2rem; color: var(--indigo); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--cream); }
+
+    /* FORM */
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.55; margin-bottom: 0.3rem; }
+    .form-group input, .form-group textarea { width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid #e5ddd6; border-radius: 0.55rem; font-family: "Lora", serif; font-size: 0.93rem; color: var(--indigo); background: var(--cream); outline: none; transition: border-color 0.2s; resize: vertical; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--amber); }
+    .form-group textarea { min-height: 180px; }
+    .status { padding: 0.7rem 1rem; border-radius: 0.55rem; margin-top: 0.9rem; font-size: 0.875rem; display: none; }
+    .status.ok  { background: #e8f5e9; color: #2e7d32; display: block; }
+    .status.err { background: #ffebee; color: #c62828; display: block; }
+
+    /* POSTS LIST */
+    .posts-list { list-style: none; }
+    .post-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0; border-bottom: 1px solid var(--cream); }
+    .post-item:last-child { border-bottom: none; }
+    .post-name { flex: 1; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .del-btn { flex-shrink: 0; background: none; border: 1px solid var(--rose); color: var(--rose); padding: 0.2rem 0.65rem; border-radius: 0.4rem; cursor: pointer; font-size: 0.8rem; transition: background 0.15s, color 0.15s; }
+    .del-btn:hover { background: var(--rose); color: #fff; }
+    .loading { text-align: center; opacity: 0.45; padding: 1.5rem 0; font-size: 0.9rem; }
+    .empty { opacity: 0.4; font-size: 0.9rem; padding: 1rem 0; }
   </style>
 </head>
 <body>
-  <div id="preload">
-    <h1>apricity</h1>
-    <p>loading admin…</p>
+
+<!-- LOGIN -->
+<div id="login">
+  <h1>apricity</h1>
+  <p class="sub">super admin</p>
+  <div class="card">
+    <label for="tok">GitHub Personal Access Token</label>
+    <input type="password" id="tok" placeholder="ghp_xxxxxxxxxxxxxxxx" autocomplete="current-password">
+    <p class="error" id="tok-err">Token rejected — make sure it has <strong>repo</strong> scope.</p>
+    <button class="btn" id="login-btn">Enter &rarr;</button>
+    <p class="hint">
+      Need a token? <a href="https://github.com/settings/tokens/new?scopes=repo&description=apricity+admin" target="_blank">Generate one here</a> (repo scope).<br>
+      Stored only in <em>this browser</em> — never sent anywhere else.
+    </p>
   </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var el = document.getElementById('preload');
-      if (el) el.style.display = 'none';
+</div>
+
+<!-- ADMIN -->
+<div id="admin">
+  <header class="admin-header">
+    <h1>apricity <span>admin</span></h1>
+    <button class="logout-btn" id="logout-btn">logout</button>
+  </header>
+  <div class="admin-body">
+
+    <div class="panel">
+      <h2>New Post</h2>
+      <div class="form-group"><label>Title *</label><input type="text" id="p-title" placeholder="Something on my mind…"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="p-date"></div>
+      <div class="form-group"><label>Mood</label><input type="text" id="p-mood" placeholder="warm &amp; curious"></div>
+      <div class="form-group"><label>Tags (comma separated)</label><input type="text" id="p-tags" placeholder="thoughts, life"></div>
+      <div class="form-group"><label>Description</label><input type="text" id="p-desc" placeholder="A short blurb…"></div>
+      <div class="form-group"><label>Content (Markdown) *</label><textarea id="p-body" placeholder="Write your post here…"></textarea></div>
+      <button class="btn btn-sage" id="publish-btn">Publish Post</button>
+      <div class="status" id="pub-status"></div>
+    </div>
+
+    <div class="panel">
+      <h2>All Posts</h2>
+      <div class="loading" id="posts-loading">loading…</div>
+      <ul class="posts-list" id="posts-list"></ul>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const REPO = 'vaishnavi-mg/apricity';
+  const API  = 'https://api.github.com';
+  const $    = id => document.getElementById(id);
+
+  async function gh(path, method, body) {
+    method = method || 'GET';
+    var opts = {
+      method: method,
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('apricity_token'),
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    };
+    if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+    return fetch(API + path, opts);
+  }
+
+  // Login
+  $('login-btn').addEventListener('click', async function() {
+    var token = $('tok').value.trim();
+    if (!token) return;
+    $('login-btn').textContent = 'Checking…';
+    $('login-btn').disabled = true;
+    $('tok-err').style.display = 'none';
+    var res = await fetch(API + '/repos/' + REPO, {
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
     });
-  </script>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    if (res.ok) { localStorage.setItem('apricity_token', token); showAdmin(); }
+    else { $('tok-err').style.display = 'block'; $('login-btn').textContent = 'Enter →'; $('login-btn').disabled = false; }
+  });
+  $('tok').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('login-btn').click(); });
+
+  $('logout-btn').addEventListener('click', function() {
+    localStorage.removeItem('apricity_token');
+    $('admin').style.display = 'none';
+    $('login').style.display = 'flex';
+    $('tok').value = '';
+  });
+
+  function showAdmin() {
+    $('login').style.display = 'none';
+    $('admin').style.display = 'block';
+    $('p-date').value = new Date().toISOString().slice(0, 10);
+    loadPosts();
+  }
+
+  async function loadPosts() {
+    $('posts-loading').style.display = 'block';
+    $('posts-list').innerHTML = '';
+    var res = await gh('/repos/' + REPO + '/contents/content/posts');
+    $('posts-loading').style.display = 'none';
+    if (!res.ok) { $('posts-list').innerHTML = '<li class="empty">Could not load posts.</li>'; return; }
+    var files = (await res.json()).filter(function(f) { return f.name.endsWith('.md'); });
+    if (!files.length) { $('posts-list').innerHTML = '<li class="empty">No posts yet — write one!</li>'; return; }
+    files.forEach(function(file) {
+      var li = document.createElement('li');
+      li.className = 'post-item';
+      var display = file.name.replace(/\.md$/, '').replace(/-/g, ' ');
+      li.innerHTML = '<span class="post-name" title="' + file.name + '">' + display + '</span><button class="del-btn" data-name="' + file.name + '" data-sha="' + file.sha + '">delete</button>';
+      $('posts-list').appendChild(li);
+    });
+    $('posts-list').querySelectorAll('.del-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { deletePost(btn.dataset.name, btn.dataset.sha, btn); });
+    });
+  }
+
+  async function deletePost(name, sha, btn) {
+    if (!confirm('Delete "' + name + '"?\n\nThis cannot be undone.')) return;
+    btn.textContent = '…'; btn.disabled = true;
+    var res = await gh('/repos/' + REPO + '/contents/content/posts/' + name, 'DELETE', { message: 'delete: ' + name, sha: sha });
+    if (res.ok) {
+      btn.closest('.post-item').remove();
+      if (!$('posts-list').children.length) $('posts-list').innerHTML = '<li class="empty">No posts yet — write one!</li>';
+    } else { alert('Delete failed. Check token permissions.'); btn.textContent = 'delete'; btn.disabled = false; }
+  }
+
+  $('publish-btn').addEventListener('click', async function() {
+    var title = $('p-title').value.trim();
+    var body  = $('p-body').value.trim();
+    if (!title || !body) { setStatus('pub-status', 'err', 'Title and content are required.'); return; }
+    var date  = $('p-date').value || new Date().toISOString().slice(0, 10);
+    var mood  = $('p-mood').value.trim();
+    var desc  = $('p-desc').value.trim();
+    var tags  = $('p-tags').value.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
+    var slug  = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    var fname = slug + '.md';
+    var moodLine = mood ? '\nmood: "' + mood + '"' : '';
+    var descLine = desc ? '\ndescription: "' + desc + '"' : '';
+    var tagsLine = tags.length ? '\ntags: [' + tags.map(function(t) { return '"' + t + '"'; }).join(', ') + ']' : '';
+    var md = '---\ntitle: "' + title + '"\ndate: ' + date + moodLine + descLine + tagsLine + '\ndraft: false\n---\n\n' + body;
+    var encoded = btoa(unescape(encodeURIComponent(md)));
+    $('publish-btn').textContent = 'Publishing…'; $('publish-btn').disabled = true;
+    var res = await gh('/repos/' + REPO + '/contents/content/posts/' + fname, 'PUT', { message: 'add: ' + fname, content: encoded });
+    if (res.ok) {
+      setStatus('pub-status', 'ok', '"' + title + '" published! Site rebuilds in ~30 seconds.');
+      ['p-title','p-mood','p-tags','p-desc','p-body'].forEach(function(id) { $(id).value = ''; });
+      $('p-date').value = new Date().toISOString().slice(0, 10);
+      loadPosts();
+    } else {
+      var err = await res.json().catch(function() { return {}; });
+      setStatus('pub-status', 'err', err.message || 'Publish failed — check token permissions.');
+    }
+    $('publish-btn').textContent = 'Publish Post'; $('publish-btn').disabled = false;
+  });
+
+  function setStatus(id, type, msg) {
+    var el = $(id);
+    el.className = 'status ' + type;
+    el.textContent = msg;
+    setTimeout(function() { el.style.display = 'none'; }, 6000);
+  }
+
+  if (localStorage.getItem('apricity_token')) showAdmin();
+</script>
 </body>
 </html>
